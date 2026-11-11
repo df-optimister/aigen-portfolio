@@ -1,0 +1,43 @@
+@page { size: A4; margin: 12mm; }
+
+@media print {
+  html { scroll-behavior: auto; }
+  body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 13px; }
+
+  nav.toc, .expand-all, .step-next, .viz-toggle, .play-btn, .demo-expand { display: none !important; }
+
+  .reveal, .reveal.is-in { opacity: 1 !important; transform: none !important; transition: none !important; }
+  * { animation: none !important; transition: none !important; }
+
+  .hero { min-height: 0; }
+  .hero-inner { padding: 28px 24px 24px; }
+  .hero { border-radius: 10px; }
+  .hero-pitch { width: 220px; right: 0; }
+
+  .project, .next { padding: 0 3px; min-height: 0; max-width: none; }
+  #p01 { margin-top: 28px; }
+  #p02, #next { break-before: page; }
+  .proj-head { break-after: avoid; }
+
+  /* every step open in print, regardless of on-screen state */
+  .step-panel[hidden] { display: block !important; }
+  .step { break-inside: avoid; box-shadow: none; border: 1px solid #d9dde7; }
+  .step.is-open { border-color: #d9dde7; box-shadow: none; }
+  .step-icon { display: none; }
+
+  /* A4 content width (~718px) would trip the mobile rule; print as two columns */
+  .step-row.r3, .step-row.r2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; width: 100% !important; }
+  .step-head { padding: 12px 14px 10px; }
+  .step-panel { padding: 0 14px 14px; }
+  .step-impact { font-size: 16px; }
+  .bullets { margin: 10px 0 0; }
+
+  .next-grid { grid-template-columns: minmax(0, 1fr); }
+  .next-card { box-shadow: none; border: 1px solid #d9dde7; break-inside: avoid; }
+
+  .contact { break-before: avoid; }
+  .contact-inner { padding: 20px 0; }
+  .contact-links a::after { content: " " attr(href); font-weight: 400; font-size: 11px; color: var(--on-dark-2); }
+
+  a { text-decoration: none; }
+}

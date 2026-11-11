@@ -132,6 +132,10 @@ main > section, .contact { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .pb-o circle { fill: rgba(122, 28, 52, .55); stroke: rgba(231, 160, 180, .85); stroke-width: 3; }
 .pb-o text { font: 700 22px var(--font); fill: #fff; text-anchor: middle; }
 .pb-x path { fill: none; stroke: rgba(201, 209, 230, .7); stroke-width: 5; stroke-linecap: round; }
+/* goalkeepers: gold, apart from both outfield teams */
+.pb-o.pb-gk circle { fill: rgba(227, 193, 111, .6); stroke: #E3C16F; }
+.pb-o.pb-gk text { fill: var(--navy-900); }
+.pb-x.pb-gk path { stroke: #E3C16F; }
 .net-grid { stroke: rgba(231, 160, 180, .14); stroke-dasharray: 6 10; }
 .net-links path { stroke: rgba(231, 160, 180, .55); stroke-width: 3; }
 .net-links path.loop { stroke: rgba(159, 176, 214, .6); stroke-dasharray: 8 8; }

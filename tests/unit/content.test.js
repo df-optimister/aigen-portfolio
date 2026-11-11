@@ -58,7 +58,6 @@ test('step 06 describes the service born from each project', () => {
   assert.match(a.impact, /오프더볼/);
   assert.ok(a.bullets.join('\n').includes('수비'));
   assert.match(b.impact, /전통주/);
-  assert.ok(b.bullets.some((x) => x.includes('구상')));
   for (const s of [a, b]) assert.ok(s.bullets.length >= 4);
 });
 
@@ -138,4 +137,20 @@ test('next: matrix resources and roadmap', () => {
   assert.deepEqual(C.next.roadmap.map((r) => r.phase), ['YEAR 1 · FIELD', 'YEAR 1 · VALUE CREATION', 'YEAR 2', 'Demo Day']);
   const p02Phases = C.next.roadmap.filter((r) => r.items.some((i) => i.project === 'p02')).map((r) => r.phase);
   assert.deepEqual(p02Phases, ['YEAR 1 · VALUE CREATION', 'YEAR 2']);
+});
+
+test('project 1 service is framed as a SaaS business', () => {
+  const s = C.projects[0].steps[5];
+  assert.ok((s.impact + s.bullets.join('\n')).includes('SaaS'));
+});
+
+test('project 2 service: brewery direct, AI review summary, taste matching', () => {
+  const s = C.projects[1].steps[5];
+  const t = s.impact + '\n' + s.bullets.join('\n');
+  for (const k of ['양조장', '고객', '리뷰', 'AI', '요약', '맛', '취향', '유통', '브랜드']) assert.ok(t.includes(k), k);
+});
+
+test('no "아직 만들지 않은 구상" wording anywhere', () => {
+  const all = allStrings(C).join('\n');
+  for (const bad of ['아직 만들지 않은', '아직 아무것도 만들지', '구상 단계']) assert.ok(!all.includes(bad), bad);
 });

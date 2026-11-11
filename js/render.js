@@ -14,6 +14,14 @@
     el.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
   }
 
+  function pbO(x, y, n, gk) {
+    return '<g class="pb-o' + (gk ? ' pb-gk' : '') + '" data-y="' + y + '"><circle cx="' + x + '" cy="' + y + '" r="22"/>' +
+      '<text x="' + x + '" y="' + (y + 8) + '">' + n + '</text></g>';
+  }
+  function pbX(x, y, gk) {
+    return '<g class="pb-x' + (gk ? ' pb-gk' : '') + '" data-y="' + y + '"><path d="M' + (x - 13) + ' ' + (y - 13) + ' l26 26 m0 -26 l-26 26"/></g>';
+  }
+
   // Hero illustrations — static, author-written SVG (no user input), so insertAdjacentHTML is safe here.
   // 1지망: tactics playbook (O = attack, X = defence, dashed = off-ball runs, solid = pass).
   var ART_PLAYBOOK =
@@ -28,28 +36,26 @@
     '<rect x="138" y="865" width="404" height="165"/><rect x="248" y="975" width="184" height="55"/>' +
     '<path d="M268 185 A91 91 0 0 0 412 185"/><path d="M268 865 A91 91 0 0 1 412 865"/></g>' +
     // defensive off-ball (X): covering + forcing the attacker's direction
-    '<path class="pb-arrow def" d="M410 452 Q452 430 470 390" marker-end="url(#pb-head-def)"/>' +
-    '<path class="pb-arrow def" d="M292 452 Q300 500 322 548" marker-end="url(#pb-head-def)"/>' +
-    '<path class="pb-arrow def" d="M240 330 Q232 300 214 262" marker-end="url(#pb-head-def)"/>' +
+    '<path class="pb-arrow def" d="M392 246 Q376 262 356 272" marker-end="url(#pb-head-def)"/>' +
+    '<path class="pb-arrow def" d="M420 386 Q440 410 452 440" marker-end="url(#pb-head-def)"/>' +
+    '<path class="pb-arrow def" d="M286 386 Q300 400 318 412" marker-end="url(#pb-head-def)"/>' +
+    '<path class="pb-arrow def" d="M310 576 Q318 592 322 604" marker-end="url(#pb-head-def)"/>' +
     // attacking: pass (solid) + off-ball runs (dashed)
-    '<path class="pb-arrow pass" d="M318 612 L222 540" marker-end="url(#pb-head)"/>' +
-    '<path class="pb-arrow run" d="M480 488 C520 420 500 330 430 262" marker-end="url(#pb-head)"/>' +
-    '<path class="pb-arrow run" d="M190 508 C150 450 150 380 168 320" marker-end="url(#pb-head)"/>' +
-    '<path class="pb-arrow run" d="M350 410 C380 360 360 300 330 240" marker-end="url(#pb-head)"/>' +
-    '<g class="pb-o"><circle cx="340" cy="628" r="22"/><text x="340" y="636">10</text></g>' +
-    '<g class="pb-o"><circle cx="200" cy="524" r="22"/><text x="200" y="532">7</text></g>' +
-    '<g class="pb-o"><circle cx="486" cy="506" r="22"/><text x="486" y="514">9</text></g>' +
-    '<g class="pb-o"><circle cx="344" cy="430" r="22"/><text x="344" y="438">8</text></g>' +
-    '<g class="pb-o"><circle cx="120" cy="720" r="22"/><text x="120" y="728">11</text></g>' +
-    '<g class="pb-x"><path d="M386 446 l26 26 m0 -26 l-26 26"/></g>' +
-    '<g class="pb-x"><path d="M276 446 l26 26 m0 -26 l-26 26"/></g>' +
-    '<g class="pb-x"><path d="M228 344 l26 26 m0 -26 l-26 26"/></g>' +
-    '<g class="pb-x"><path d="M440 340 l26 26 m0 -26 l-26 26"/></g>' +
-    '<g class="pb-x"><path d="M327 218 l26 26 m0 -26 l-26 26"/></g>' +
-    '<g class="pb-x"><path d="M327 70 l26 26 m0 -26 l-26 26"/></g>' +
+    '<path class="pb-arrow pass" d="M362 616 L456 554" marker-end="url(#pb-head)"/>' +
+    '<path class="pb-arrow run" d="M344 404 C352 350 338 300 330 252" marker-end="url(#pb-head)"/>' +
+    '<path class="pb-arrow run" d="M566 366 C590 320 600 280 596 230" marker-end="url(#pb-head)"/>' +
+    '<path class="pb-arrow run" d="M128 376 C140 330 150 300 166 272" marker-end="url(#pb-head)"/>' +
+    // attacking team (O), 4-3-3, attacking upwards; goalkeeper in its own goal area
+    pbO(340, 990, 1, true) + pbO(130, 700, 2) + pbO(270, 760, 4) + pbO(410, 760, 5) + pbO(550, 690, 3) +
+    pbO(200, 560, 6) + pbO(340, 628, 10) + pbO(480, 540, 8) +
+    pbO(120, 400, 11) + pbO(344, 430, 9) + pbO(560, 390, 7) +
+    // defending team (X), 4-4-2; goalkeeper near the top goal
+    pbX(340, 62, true) + pbX(170, 250) + pbX(290, 230) + pbX(400, 230) + pbX(520, 260) +
+    pbX(178, 446) + pbX(280, 370) + pbX(410, 370) + pbX(500, 446) +
+    pbX(300, 560) + pbX(420, 556) +
     '</svg>';
 
-  // 2지망: marketplace network in the same line style (sellers → platform → users, community/marketing loop).
+  // 2지망: brewery-direct marketplace in the same line style (breweries → AI matching → customers, reviews loop back).
   var ART_NETWORK =
     '<svg class="hero-art" data-project="p02" viewBox="0 0 680 1050" aria-hidden="true" focusable="false">' +
     '<defs><marker id="net-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="pb-head"/></marker></defs>' +
@@ -64,13 +70,13 @@
     '<g class="net-node hub"><circle cx="340" cy="525" r="74"/>' +
     '<path class="bottle" d="M330 476 h20 v24 q14 10 14 30 v34 h-48 v-34 q0 -20 14 -30 z"/></g>' +
     '<text class="net-t hub-t" x="340" y="630">전통주</text>' +
-    '<g class="net-node seller"><rect x="96" y="262" width="96" height="64" rx="10"/><text class="net-t" x="144" y="302">판매자</text></g>' +
+    '<g class="net-node seller"><rect x="96" y="262" width="96" height="64" rx="10"/><text class="net-t" x="144" y="302">양조장</text></g>' +
     '<g class="net-node seller"><rect x="40" y="490" width="96" height="64" rx="10"/><text class="net-t" x="88" y="530">양조장</text></g>' +
-    '<g class="net-node seller"><rect x="96" y="724" width="96" height="64" rx="10"/><text class="net-t" x="144" y="764">판매자</text></g>' +
-    '<g class="net-node user"><circle cx="560" cy="282" r="38"/><text class="net-t" x="560" y="290">유저</text></g>' +
-    '<g class="net-node user"><circle cx="610" cy="525" r="38"/><text class="net-t" x="610" y="533">유저</text></g>' +
-    '<g class="net-node user"><circle cx="560" cy="770" r="38"/><text class="net-t" x="560" y="778">유저</text></g>' +
-    '<g class="net-node loopnode"><rect x="250" y="852" width="180" height="56" rx="28"/><text class="net-t" x="340" y="888">커뮤니티·마케팅</text></g>' +
+    '<g class="net-node seller"><rect x="96" y="724" width="96" height="64" rx="10"/><text class="net-t" x="144" y="764">양조장</text></g>' +
+    '<g class="net-node user"><circle cx="560" cy="282" r="38"/><text class="net-t" x="560" y="290">고객</text></g>' +
+    '<g class="net-node user"><circle cx="610" cy="525" r="38"/><text class="net-t" x="610" y="533">고객</text></g>' +
+    '<g class="net-node user"><circle cx="560" cy="770" r="38"/><text class="net-t" x="560" y="778">고객</text></g>' +
+    '<g class="net-node loopnode"><rect x="240" y="852" width="200" height="56" rx="28"/><text class="net-t" x="340" y="888">리뷰 · AI 요약</text></g>' +
     '</svg>';
 
   function renderHero(doc, C) {

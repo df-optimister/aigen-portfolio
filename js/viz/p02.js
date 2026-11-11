@@ -157,14 +157,13 @@
   VIZ['p02-flywheel'] = function (box) {
     var head = el('div', 'viz-head');
     head.appendChild(el('span', 'badge badge-plan-dark', '계획'));
-    head.appendChild(el('span', 'viz-head-t', '다음 도전 · 아직 만들지 않은 구상'));
+    head.appendChild(el('span', 'viz-head-t', '다음 도전 · 전통주 거래 플랫폼'));
     box.appendChild(head);
     var s = rootSvg(300, 240, '플랫폼 플라이휠 구상: 유저, 커뮤니티, 마케팅, 판매자가 서로를 키우는 전통주 거래 플랫폼');
     s.appendChild(arrowDefs('p02-fly-arrow'));
     cycle(s, 150, 118, 86, ['유저', '커뮤니티', '마케팅', '판매자'], 'p02-fly-arrow', [70, 84, 76, 76]);
     s.appendChild(text(150, 108, '전통주', 'cap-t', { 'text-anchor': 'middle' }));
-    s.appendChild(text(150, 123, '거래 플랫폼', 'cap-s', { 'text-anchor': 'middle' }));
-    s.appendChild(text(150, 137, '(구상)', 'cap-s', { 'text-anchor': 'middle' }));
+    s.appendChild(text(150, 126, '거래 플랫폼', 'cap-s', { 'text-anchor': 'middle' }));
     box.appendChild(s);
     box.appendChild(K.gapTable('p02', 'BONBAB 다음의 갭'));
   };
@@ -173,47 +172,65 @@
   VIZ['p02-service'] = function (box) {
     var head = el('div', 'viz-head');
     head.appendChild(el('span', 'badge badge-plan-dark', '계획'));
-    head.appendChild(el('span', 'viz-head-t', '전통주 거래 플랫폼 · 아직 만들지 않은 구상'));
+    head.appendChild(el('span', 'viz-head-t', '전통주 직거래 플랫폼 · 양조장 ↔ 고객'));
     box.appendChild(head);
 
-    var s = rootSvg(300, 250, '구상 중인 거래 플랫폼: 판매자가 플랫폼에 상품을 올리고 유저가 구매하며, 커뮤니티와 마케팅이 유저를 다시 끌어들임');
+    var s = rootSvg(300, 262, '구상한 플랫폼: 소규모 양조장과 고객을 유통 단계 없이 잇고, 생생한 리뷰와 쉬운 리뷰를 AI가 요약해 고객 취향과 매칭');
     s.appendChild(arrowDefs('p02s-arrow'));
     function link(d, cls) { s.appendChild(svg('path', { d: d, class: 'svc-link' + (cls ? ' ' + cls : ''), 'marker-end': 'url(#p02s-arrow)' })); }
-    link('M78,62 Q118,72 128,98');
-    link('M78,184 Q118,174 128,148');
-    link('M174,98 Q184,72 222,62');
-    link('M174,148 Q184,174 222,184');
-    link('M246,206 C246,236 196,240 186,232', 'loop');
-    link('M118,232 C96,236 70,218 66,206', 'loop');
-    [['판매자', 44, 50], ['양조장', 44, 196]].forEach(function (n) {
+
+    // the middlemen this platform skips
+    s.appendChild(svg('g', { class: 'svc-skip' }, [
+      svg('rect', { x: 92, y: 4, width: 116, height: 22, rx: 4 }),
+      text(150, 19, '여러 유통 단계', 'svc-t small skip-t', { 'text-anchor': 'middle' }),
+      svg('line', { x1: 96, y1: 15, x2: 204, y2: 15, class: 'svc-strike' }),
+    ]));
+    s.appendChild(text(150, 42, '직거래', 'lbl lbl-hot', { 'text-anchor': 'middle' }));
+
+    [44, 104, 164].forEach(function (y) {
       s.appendChild(svg('g', { class: 'svc-node seller' }, [
-        svg('rect', { x: n[1] - 36, y: n[2] - 16, width: 72, height: 32, rx: 6 }),
-        text(n[1], n[2] + 4.5, n[0], 'svc-t', { 'text-anchor': 'middle' }),
+        svg('rect', { x: 6, y: y - 14, width: 68, height: 28, rx: 6 }),
+        text(40, y + 4.5, '양조장', 'svc-t small', { 'text-anchor': 'middle' }),
       ]));
     });
-    [['유저', 250, 50], ['유저', 250, 196]].forEach(function (n) {
+    [70, 150].forEach(function (y) {
       s.appendChild(svg('g', { class: 'svc-node user' }, [
-        svg('circle', { cx: n[1], cy: n[2], r: 22 }),
-        text(n[1], n[2] + 4.5, n[0], 'svc-t', { 'text-anchor': 'middle' }),
+        svg('circle', { cx: 268, cy: y, r: 24 }),
+        text(268, y + 4.5, '고객', 'svc-t', { 'text-anchor': 'middle' }),
       ]));
     });
+    link('M74,44 Q108,52 122,84');
+    link('M74,104 L116,106');
+    link('M74,164 Q108,156 122,128');
+    link('M198,92 Q222,74 242,72');
+    link('M198,122 Q222,140 242,146');
     s.appendChild(svg('g', { class: 'svc-node hub' }, [
-      svg('circle', { cx: 150, cy: 123, r: 34 }),
-      text(150, 119, '전통주', 'svc-t hub-t', { 'text-anchor': 'middle' }),
-      text(150, 134, '거래 플랫폼', 'cap-s', { 'text-anchor': 'middle' }),
+      svg('circle', { cx: 158, cy: 106, r: 42 }),
+      text(158, 98, 'AI', 'svc-t hub-t', { 'text-anchor': 'middle' }),
+      text(158, 113, '리뷰 요약', 'cap-s', { 'text-anchor': 'middle' }),
+      text(158, 127, '취향 매칭', 'cap-s', { 'text-anchor': 'middle' }),
     ]));
-    s.appendChild(svg('g', { class: 'svc-node loopnode' }, [
-      svg('rect', { x: 102, y: 220, width: 96, height: 26, rx: 13 }),
-      text(150, 237, '커뮤니티·마케팅', 'svc-t small', { 'text-anchor': 'middle' }),
-    ]));
-    s.appendChild(text(94, 46, '상품 등록', 'cap-s'));
-    s.appendChild(text(206, 46, '구매', 'cap-s', { 'text-anchor': 'end' }));
+
+    // reviews flow back into the AI
+    [['생생한 리뷰', 104], ['쉬운 리뷰', 206]].forEach(function (r) {
+      s.appendChild(svg('g', { class: 'svc-pill' }, [
+        svg('rect', { x: r[1] - 42, y: 198, width: 84, height: 24, rx: 12 }),
+        text(r[1], 214, r[0], 'svc-t small', { 'text-anchor': 'middle' }),
+      ]));
+    });
+    link('M256,174 Q258,200 250,208', 'loop');
+    link('M110,196 Q118,170 134,144', 'loop');
+    link('M200,196 Q192,170 180,144', 'loop');
+    s.appendChild(text(150, 244, 'AI가 전체 리뷰 반응·평가와 맛 특징을 요약', 'cap-s', { 'text-anchor': 'middle' }));
     box.appendChild(s);
 
-    var out = el('div', 'svc-out');
-    out.appendChild(el('span', 'svc-out-h', '풀어야 할 과제'));
-    ['유저를 끌어들이는 기능', '커뮤니티', '마케팅'].forEach(function (t) { out.appendChild(el('span', 'res-chip', t)); });
-    box.appendChild(out);
-    box.appendChild(el('p', 'viz-note', '구상 단계 — 시장 규모 등 수치는 출처를 확인한 뒤 제시합니다.'));
+    var dl = el('dl', 'svc-values');
+    [['양조장', '브랜드가 아니라 맛으로 승부'],
+     ['고객', '유통 단계를 줄여 저렴하게, 취향에 딱 맞는 전통주'],
+     ['AI', '리뷰를 일일이 읽지 않아도 전체 반응과 맛 특징을 한눈에']].forEach(function (v) {
+      dl.appendChild(el('dt', null, v[0]));
+      dl.appendChild(el('dd', null, v[1]));
+    });
+    box.appendChild(dl);
   };
 })(typeof window !== 'undefined' ? window : this);

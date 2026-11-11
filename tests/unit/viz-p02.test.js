@@ -64,9 +64,16 @@ test('p02-flywheel is marked as a plan with no market numbers', () => {
   assert.equal(rows.length, w.PORTFOLIO_CONTENT.next.matrix.filter((m) => m.project === 'p02').length);
 });
 
-test('p02-service is a marketplace concept with no market numbers', () => {
+test('p02-service: breweries to customers via AI review summary and taste matching', () => {
   const { el } = draw('p02-service');
   const t = el.textContent;
-  for (const s of ['판매자', '유저', '커뮤니티', '전통주', '구상']) assert.ok(t.includes(s), s);
+  for (const s of ['양조장', '고객', '생생한 리뷰', '쉬운 리뷰', 'AI', '리뷰 요약', '취향 매칭', '유통', '맛으로 승부']) assert.ok(t.includes(s), s);
   assert.ok(!/\d+\s*(억|조|%)/.test(t));
+  assert.ok(!t.includes('아직 만들지 않은'));
+});
+
+test('p02-flywheel no longer says 아직 만들지 않은 구상', () => {
+  const { el } = draw('p02-flywheel');
+  assert.ok(!el.textContent.includes('아직 만들지 않은'));
+  assert.ok(!el.textContent.includes('(구상)'));
 });

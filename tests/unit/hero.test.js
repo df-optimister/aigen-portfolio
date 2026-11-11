@@ -53,7 +53,29 @@ test('tagline is announced politely when it changes', () => {
 test('hero art: playbook pitch for 1지망, platform network for 2지망', () => {
   const { art } = setup();
   const [a, b] = art();
-  assert.ok(a.querySelector('.pb-arrow') && a.querySelectorAll('.pb-o, .pb-x').length >= 8, 'playbook needs players and arrows');
+  assert.ok(a.querySelector('.pb-arrow'), 'playbook needs arrows');
   assert.ok(b.querySelectorAll('.net-node').length >= 4, 'network needs nodes');
   for (const svg of [a, b]) assert.equal(svg.getAttribute('aria-hidden'), 'true');
+});
+
+test('playbook shows 11 players per team, goalkeepers coloured apart near their goals', () => {
+  const { art } = setup();
+  const pb = art()[0];
+  assert.equal(pb.querySelectorAll('g.pb-o').length, 11);
+  assert.equal(pb.querySelectorAll('g.pb-x').length, 11);
+  const gk = Array.from(pb.querySelectorAll('g.pb-gk'));
+  assert.equal(gk.length, 2);
+  assert.equal(gk.filter((g) => g.classList.contains('pb-o')).length, 1);
+  assert.equal(gk.filter((g) => g.classList.contains('pb-x')).length, 1);
+  // pitch box spans y 20..1030 in the viewBox; goal areas end at 75 / 975
+  gk.forEach((g) => {
+    const y = Number(g.dataset.y);
+    assert.ok(y < 120 || y > 930, `goalkeeper at y=${y} is not near a goal`);
+  });
+});
+
+test('2지망 network: breweries, customers, AI review summary', () => {
+  const { art } = setup();
+  const t = art()[1].textContent;
+  for (const s of ['양조장', '고객', 'AI', '리뷰']) assert.ok(t.includes(s), s);
 });

@@ -272,7 +272,7 @@
   VIZ['p01-service'] = function (box) {
     var head = el('div', 'viz-head');
     head.appendChild(el('span', 'badge badge-plan-dark', '계획'));
-    head.appendChild(el('span', 'viz-head-t', '오프더볼 분석 플랫폼 · 아직 만들지 않은 구상'));
+    head.appendChild(el('span', 'viz-head-t', '오프더볼 분석 SaaS'));
     box.appendChild(head);
 
     var W = 300, PW = 280, PH = 181;

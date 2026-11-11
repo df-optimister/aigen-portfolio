@@ -212,3 +212,12 @@ body.demo-open { overflow: hidden; }
 .svc-t { font-size: 12px; font-weight: 700; fill: #fff; }
 .svc-t.small { font-size: 10.5px; }
 .svc-t.hub-t { font-size: 13px; }
+
+/* p02 service: skipped middlemen, review pills, value list */
+.svc-skip rect { fill: none; stroke: #56648a; stroke-dasharray: 3 3; }
+.skip-t { fill: #8a96b8; }
+.svc-strike { stroke: var(--burgundy-soft); stroke-width: 1.5; }
+.svc-pill rect { fill: rgba(231, 160, 180, .12); stroke: var(--burgundy-soft); stroke-width: 1; }
+.svc-values { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; margin: 10px 0 0; font-size: 12.5px; }
+.svc-values dt { font-weight: 800; color: var(--burgundy-soft); }
+.svc-values dd { margin: 0; color: var(--on-dark); }

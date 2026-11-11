@@ -105,3 +105,9 @@ test('p01-service shows attack and defence off-ball evaluation and outputs', () 
   assert.ok(el.querySelectorAll('.atk-arrow').length >= 2);
   assert.ok(el.querySelectorAll('.def-arrow').length >= 2);
 });
+
+test('p01-service is labelled as a SaaS and not as an unbuilt idea', () => {
+  const { el } = draw('p01-service');
+  assert.ok(el.textContent.includes('SaaS'));
+  assert.ok(!el.textContent.includes('아직 만들지 않은'));
+});

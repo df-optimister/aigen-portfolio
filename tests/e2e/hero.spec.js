@@ -1,14 +1,14 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-test('page text uses Playfair Display with Noto Serif KR for Hangul', async ({ page }) => {
+test('page text uses Playfair Display with Pretendard (as on aigen.sk.com) for Hangul', async ({ page }) => {
   await page.goto('/');
   const ff = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-  expect(ff).toMatch(/^"?Playfair Display"?,\s*"?Noto Serif KR"?/);
+  expect(ff).toMatch(/^"?Playfair Display"?,\s*"?Pretendard Variable"?/);
   await page.evaluate(() => document.fonts.ready);
   const loaded = await page.evaluate(() => [
     document.fonts.check('16px "Playfair Display"', 'Ab1'),
-    document.fonts.check('16px "Noto Serif KR"', '한글'),
+    document.fonts.check('16px "Pretendard Variable"', '한글'),
   ]);
   expect(loaded).toEqual([true, true]);
 });

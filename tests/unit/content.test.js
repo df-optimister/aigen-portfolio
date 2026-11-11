@@ -154,3 +154,10 @@ test('no "아직 만들지 않은 구상" wording anywhere', () => {
   const all = allStrings(C).join('\n');
   for (const bad of ['아직 만들지 않은', '아직 아무것도 만들지', '구상 단계']) assert.ok(!all.includes(bad), bad);
 });
+
+test('next matrix wording confirmed by the user', () => {
+  const p01 = C.next.matrix.filter((m) => m.project === 'p01');
+  assert.ok(p01.some((m) => m.gap === '다른 관점을 통한 보완 및 발전' && m.resource === '동료 교류·협업'));
+  assert.ok(p01.some((m) => m.gap === '상용화의 한계' && m.resource === 'AI'));
+  assert.ok(!p01.some((m) => m.gap === '서로 다른 배경의 관점'));
+});

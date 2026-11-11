@@ -190,7 +190,7 @@
       matrix: [
         { project: 'p01', gap: '위치 데이터 수집의 한계', resource: 'AI' },
         { project: 'p01', gap: '움직임 정의·측정의 한계', resource: '현장 전문가 멘토' },
-        { project: 'p01', gap: '서로 다른 배경의 관점', resource: '동료 교류·협업' },
+        { project: 'p01', gap: '다른 관점을 통한 보완 및 발전', resource: '동료 교류·협업' },
         { project: 'p01', gap: '상용화의 한계', resource: 'AI' },
         { project: 'p02', gap: '전통주 업계 현장 지식의 공백', resource: '현장 전문가 멘토' },
         { project: 'p02', gap: '혼자서는 메우기 어려운 기획·실행의 공백', resource: '동료 교류·협업' },

@@ -245,7 +245,7 @@
       ['영상', '경기 영상 입력', false],
       ['탐지·추적', '선수·공 탐지, 같은 선수 이어 붙이기', true],
       ['카메라 보정', '화면 좌표 → 피치 좌표(m)', true],
-      ['움직임 분류', '침투·공간 창출 유형, 현장 전문가와 정의', true],
+      ['움직임 분류', '공격·수비 오프더볼 유형, 현장 전문가와 정의', true],
       ['지표·스카우팅 리포트', '선수 평가 자동화 · 고객 검증', true],
     ];
     var STEP = 46, H = stages.length * STEP;
@@ -266,5 +266,58 @@
     box.appendChild(s);
 
     box.appendChild(gapTable('p01', '논문이 남긴 갭'));
+  };
+
+  // ---------------------------------------------------------------- 06 service (plan)
+  VIZ['p01-service'] = function (box) {
+    var head = el('div', 'viz-head');
+    head.appendChild(el('span', 'badge badge-plan-dark', '계획'));
+    head.appendChild(el('span', 'viz-head-t', '오프더볼 분석 플랫폼 · 아직 만들지 않은 구상'));
+    box.appendChild(head);
+
+    var W = 300, PW = 280, PH = 181;
+    var s = rootSvg(W, 238, '구상 중인 분석 플랫폼: 공격의 침투·공간 창출과 수비의 수비 커버·공격수 방향 제한을 모두 평가');
+    s.appendChild(svg('defs', null, [
+      svg('marker', { id: 'p01s-atk', viewBox: '0 0 8 8', refX: 6, refY: 4, markerWidth: 6, markerHeight: 6, orient: 'auto' }, [svg('path', { d: 'M0,0 L8,4 L0,8 z', class: 'atk-head' })]),
+      svg('marker', { id: 'p01s-def', viewBox: '0 0 8 8', refX: 6, refY: 4, markerWidth: 6, markerHeight: 6, orient: 'auto' }, [svg('path', { d: 'M0,0 L8,4 L0,8 z', class: 'def-head' })]),
+    ]));
+    var g = svg('g', { transform: 'translate(10,8)' });
+    g.appendChild(pitch(PW, PH));
+    var P = m2p(PW, PH);
+    function arrow(cls, a, b, bend, marker) {
+      var p0 = P(a[0], a[1]), p1 = P(b[0], b[1]);
+      var mx = (p0[0] + p1[0]) / 2 + bend[0], my = (p0[1] + p1[1]) / 2 + bend[1];
+      return svg('path', { d: 'M' + p0 + ' Q' + mx + ',' + my + ' ' + p1, class: cls, 'marker-end': 'url(#' + marker + ')' });
+    }
+    // attack (O) — penetration + creating space; defence (X) — cover + forcing the attacker's direction
+    g.appendChild(arrow('atk-arrow', [58, 20], [80, 12], [0, -10], 'p01s-atk'));
+    g.appendChild(arrow('atk-arrow', [54, 50], [60, 62], [-6, 2], 'p01s-atk'));
+    g.appendChild(arrow('def-arrow', [78, 30], [88, 22], [4, 4], 'p01s-def'));
+    g.appendChild(arrow('def-arrow', [74, 46], [67, 55], [6, 2], 'p01s-def'));
+    [[58, 20], [54, 50], [46, 34]].forEach(function (p) { var q = P(p[0], p[1]); g.appendChild(svg('circle', { cx: q[0], cy: q[1], r: 5.5, class: 'svc-o' })); });
+    [[78, 30], [74, 46], [92, 38], [101, 34]].forEach(function (p) {
+      var q = P(p[0], p[1]);
+      g.appendChild(svg('path', { d: 'M' + (q[0] - 4.5) + ',' + (q[1] - 4.5) + ' l9,9 m0,-9 l-9,9', class: 'svc-x' }));
+    });
+    var a1 = P(80, 12), a2 = P(60, 62), d1 = P(88, 22), d2 = P(67, 55);
+    g.appendChild(text(a1[0] - 6, a1[1] - 4, '침투', 'lbl lbl-hot', { 'text-anchor': 'end' }));
+    g.appendChild(text(a2[0] - 8, a2[1] + 4, '공간 창출', 'lbl lbl-hot', { 'text-anchor': 'end' }));
+    g.appendChild(text(d1[0] + 4, d1[1] - 6, '수비 커버', 'lbl lbl-def'));
+    g.appendChild(text(d2[0] + 8, d2[1] + 12, '방향 제한', 'lbl lbl-def'));
+    s.appendChild(g);
+    s.appendChild(svg('circle', { cx: 18, cy: 222, r: 5, class: 'svc-o' }));
+    s.appendChild(text(28, 226, '공격 오프더볼', 'cap-s'));
+    s.appendChild(svg('path', { d: 'M150,217 l9,9 m0,-9 l-9,9', class: 'svc-x' }));
+    s.appendChild(text(166, 226, '수비 오프더볼', 'cap-s'));
+    box.appendChild(s);
+
+    var flow = el('ol', 'svc-flow');
+    ['경기 영상', '위치 데이터 자동 추출', '공격·수비 오프더볼 평가'].forEach(function (t) { flow.appendChild(el('li', null, t)); });
+    box.appendChild(flow);
+    var out = el('div', 'svc-out');
+    out.appendChild(el('span', 'svc-out-h', '결과물'));
+    ['선수 평가', '시장 가치 산정', '스카우팅 리포트'].forEach(function (t) { out.appendChild(el('span', 'res-chip', t)); });
+    box.appendChild(out);
+    box.appendChild(el('p', 'viz-note', '돈을 낼 고객이 누구인지는 VALUE CREATION 모듈에서 검증합니다.'));
   };
 })(typeof window !== 'undefined' ? window : this);

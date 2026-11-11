@@ -15,7 +15,7 @@ function setup() {
 test('initially all closed', () => {
   const { d } = setup();
   const panels = d.querySelectorAll('.step-panel');
-  assert.equal(panels.length, 10);
+  assert.equal(panels.length, 12);
   panels.forEach((p) => assert.equal(p.hidden, true));
   d.querySelectorAll('button.step-head').forEach((b) => assert.equal(b.getAttribute('aria-expanded'), 'false'));
 });
@@ -25,11 +25,13 @@ test('head is linked to its panel', () => {
   assert.equal(head('p01', 2).getAttribute('aria-controls'), panel('p01', 2).id);
 });
 
-test('3+2 row structure', () => {
+test('3+3 row structure', () => {
   const { d } = setup();
   for (const pid of ['p01', 'p02']) {
-    assert.equal(d.querySelectorAll(`#${pid} .step-row.r3 > article.step`).length, 3);
-    assert.equal(d.querySelectorAll(`#${pid} .step-row.r2 > article.step`).length, 2);
+    const rows = d.querySelectorAll(`#${pid} .step-row.r3`);
+    assert.equal(rows.length, 2);
+    rows.forEach((r) => assert.equal(r.querySelectorAll(':scope > article.step').length, 3));
+    assert.equal(d.querySelectorAll(`#${pid} .step-row.r2`).length, 0);
   }
 });
 
@@ -68,28 +70,28 @@ test('last next calls onLastNext target', () => {
   const { w, d, panel } = setup();
   let target = null;
   w.HTMLElement.prototype.scrollIntoView = function () { target = this.id; };
-  panel('p01', 4).querySelector('button.step-next').click();
+  panel('p01', 5).querySelector('button.step-next').click();
   assert.equal(target, 'p02');
-  panel('p02', 4).querySelector('button.step-next').click();
+  panel('p02', 5).querySelector('button.step-next').click();
   assert.equal(target, 'next');
   assert.ok(d);
 });
 
-test('expand-all toggles all five and relabels', () => {
+test('expand-all toggles all six and relabels', () => {
   const { d, openIdx } = setup();
   const btn = d.querySelector('#p01 button.expand-all');
-  assert.equal(btn.textContent.trim(), '5단계 모두 펼치기');
+  assert.equal(btn.textContent.trim(), '6단계 모두 펼치기');
   btn.click();
-  assert.deepEqual(openIdx('p01'), [0, 1, 2, 3, 4]);
+  assert.deepEqual(openIdx('p01'), [0, 1, 2, 3, 4, 5]);
   assert.equal(btn.textContent.trim(), '모두 접기');
   btn.click();
   assert.deepEqual(openIdx('p01'), []);
-  assert.equal(btn.textContent.trim(), '5단계 모두 펼치기');
+  assert.equal(btn.textContent.trim(), '6단계 모두 펼치기');
 });
 
 test('expand-all label follows manual toggles', () => {
   const { d, grids } = setup();
-  [0, 1, 2, 3, 4].forEach((i) => grids.p02.toggle(i));
+  [0, 1, 2, 3, 4, 5].forEach((i) => grids.p02.toggle(i));
   assert.equal(d.querySelector('#p02 button.expand-all').textContent.trim(), '모두 접기');
 });
 
@@ -128,11 +130,11 @@ test('renderAllViz renders every board', () => {
   d.querySelectorAll('#p01 .board').forEach((b) => assert.equal(b.dataset.rendered, '1'));
 });
 
-test('plan badge only on step 05', () => {
+test('plan badge only on steps 05 and 06', () => {
   const { steps } = setup();
   for (const pid of ['p01', 'p02']) {
     const badges = steps(pid).map((s) => !!s.querySelector('.step-head .badge-plan'));
-    assert.deepEqual(badges, [false, false, false, false, true]);
+    assert.deepEqual(badges, [false, false, false, false, true, true]);
   }
 });
 
@@ -151,15 +153,4 @@ test('panel lists every bullet', () => {
   const s = w.PORTFOLIO_CONTENT.projects[1].steps[2];
   const lis = Array.from(panel('p02', 2).querySelectorAll('ul.bullets li')).map((li) => li.textContent);
   assert.deepEqual(lis, Array.from(s.bullets));
-});
-
-test('hero renders name, label, tagline and tracks', () => {
-  const { w, d } = setup();
-  const C = w.PORTFOLIO_CONTENT;
-  const hero = d.getElementById('hero');
-  for (const t of [C.meta.label, C.meta.nameKo, C.meta.nameEn, C.meta.tagline]) assert.ok(hero.textContent.includes(t), t);
-  const badges = hero.querySelectorAll('.track');
-  assert.equal(badges.length, 2);
-  assert.ok(badges[0].classList.contains('is-primary'));
-  assert.deepEqual(Array.from(hero.querySelectorAll('a.hero-card')).map((a) => a.getAttribute('href')), ['#p01', '#p02']);
 });

@@ -14,10 +14,10 @@ async function goPrint(page) {
 test('print shows all panels and all viz', async ({ page }) => {
   await goPrint(page);
   const panels = page.locator('.step-panel');
-  await expect(panels).toHaveCount(10);
-  for (let i = 0; i < 10; i++) await expect(panels.nth(i)).toBeVisible();
+  await expect(panels).toHaveCount(12);
+  for (let i = 0; i < 12; i++) await expect(panels.nth(i)).toBeVisible();
   const rendered = await page.locator('.board').evaluateAll((els) => els.map((e) => e.dataset.rendered));
-  expect(rendered.length).toBe(10);
+  expect(rendered.length).toBe(12);
   expect(rendered.every((r) => r === '1')).toBe(true);
 });
 

@@ -36,6 +36,18 @@ test('roadmap has four phases in order and is marked as plan', () => {
   assert.ok(d.querySelector('#next .badge-plan'));
 });
 
+test('matrix and roadmap say 프로젝트 1/2 and 1안/2안, never 논문/BONBAB', () => {
+  const { d } = setup();
+  const tags = Array.from(d.querySelectorAll('#next .proj-tag')).map((e) => e.textContent);
+  assert.ok(tags.length > 0);
+  for (const t of tags) assert.ok(!/논문|BONBAB/.test(t), t);
+  const matrixTags = Array.from(d.querySelectorAll('#next table.gap-matrix .proj-tag')).map((e) => e.textContent);
+  assert.ok(matrixTags.every((t) => t === '프로젝트 1' || t === '프로젝트 2'));
+  const roadTags = Array.from(d.querySelectorAll('#next ol.roadmap .proj-tag')).map((e) => e.textContent);
+  assert.ok(roadTags.includes('1안 · 프로젝트 1') && roadTags.includes('2안 · 프로젝트 2'));
+  assert.ok(d.querySelector('#next .proj-sub').textContent.includes('하나'));
+});
+
 test('p02 roadmap items only in VALUE CREATION and YEAR 2', () => {
   const { d } = setup();
   const lis = Array.from(d.querySelectorAll('#next ol.roadmap > li'));

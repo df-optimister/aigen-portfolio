@@ -31,7 +31,9 @@
     titles.appendChild(h2);
     titles.appendChild(h(doc, 'p', 'proj-sub', project.subtitle));
     head.appendChild(titles);
-    var expandAll = h(doc, 'button', 'expand-all', '5단계 모두 펼치기');
+    var n = project.steps.length;
+    var expandLabel = n + '단계 모두 펼치기';
+    var expandAll = h(doc, 'button', 'expand-all', expandLabel);
     expandAll.type = 'button';
     head.appendChild(expandAll);
     rootEl.appendChild(head);
@@ -39,7 +41,8 @@
     // ----- grid -----
     var grid = h(doc, 'div', 'step-grid');
     var rowTop = h(doc, 'div', 'step-row r3');
-    var rowBottom = h(doc, 'div', 'step-row r2');
+    // first three steps on top; the rest below (3 → full row, 2 → centred pair)
+    var rowBottom = h(doc, 'div', 'step-row ' + (n - 3 >= 3 ? 'r3' : 'r2'));
     grid.appendChild(rowTop);
     grid.appendChild(rowBottom);
     rootEl.appendChild(grid);
@@ -97,7 +100,7 @@
 
     function sync() {
       var all = items.every(function (_, i) { return isOpen(i); });
-      expandAll.textContent = all ? '모두 접기' : '5단계 모두 펼치기';
+      expandAll.textContent = all ? '모두 접기' : expandLabel;
       expandAll.setAttribute('aria-pressed', all ? 'true' : 'false');
     }
 

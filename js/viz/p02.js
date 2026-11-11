@@ -168,4 +168,52 @@
     box.appendChild(s);
     box.appendChild(K.gapTable('p02', 'BONBAB 다음의 갭'));
   };
+
+  // ---------------------------------------------------------------- 06 service (plan)
+  VIZ['p02-service'] = function (box) {
+    var head = el('div', 'viz-head');
+    head.appendChild(el('span', 'badge badge-plan-dark', '계획'));
+    head.appendChild(el('span', 'viz-head-t', '전통주 거래 플랫폼 · 아직 만들지 않은 구상'));
+    box.appendChild(head);
+
+    var s = rootSvg(300, 250, '구상 중인 거래 플랫폼: 판매자가 플랫폼에 상품을 올리고 유저가 구매하며, 커뮤니티와 마케팅이 유저를 다시 끌어들임');
+    s.appendChild(arrowDefs('p02s-arrow'));
+    function link(d, cls) { s.appendChild(svg('path', { d: d, class: 'svc-link' + (cls ? ' ' + cls : ''), 'marker-end': 'url(#p02s-arrow)' })); }
+    link('M78,62 Q118,72 128,98');
+    link('M78,184 Q118,174 128,148');
+    link('M174,98 Q184,72 222,62');
+    link('M174,148 Q184,174 222,184');
+    link('M246,206 C246,236 196,240 186,232', 'loop');
+    link('M118,232 C96,236 70,218 66,206', 'loop');
+    [['판매자', 44, 50], ['양조장', 44, 196]].forEach(function (n) {
+      s.appendChild(svg('g', { class: 'svc-node seller' }, [
+        svg('rect', { x: n[1] - 36, y: n[2] - 16, width: 72, height: 32, rx: 6 }),
+        text(n[1], n[2] + 4.5, n[0], 'svc-t', { 'text-anchor': 'middle' }),
+      ]));
+    });
+    [['유저', 250, 50], ['유저', 250, 196]].forEach(function (n) {
+      s.appendChild(svg('g', { class: 'svc-node user' }, [
+        svg('circle', { cx: n[1], cy: n[2], r: 22 }),
+        text(n[1], n[2] + 4.5, n[0], 'svc-t', { 'text-anchor': 'middle' }),
+      ]));
+    });
+    s.appendChild(svg('g', { class: 'svc-node hub' }, [
+      svg('circle', { cx: 150, cy: 123, r: 34 }),
+      text(150, 119, '전통주', 'svc-t hub-t', { 'text-anchor': 'middle' }),
+      text(150, 134, '거래 플랫폼', 'cap-s', { 'text-anchor': 'middle' }),
+    ]));
+    s.appendChild(svg('g', { class: 'svc-node loopnode' }, [
+      svg('rect', { x: 102, y: 220, width: 96, height: 26, rx: 13 }),
+      text(150, 237, '커뮤니티·마케팅', 'svc-t small', { 'text-anchor': 'middle' }),
+    ]));
+    s.appendChild(text(94, 46, '상품 등록', 'cap-s'));
+    s.appendChild(text(206, 46, '구매', 'cap-s', { 'text-anchor': 'end' }));
+    box.appendChild(s);
+
+    var out = el('div', 'svc-out');
+    out.appendChild(el('span', 'svc-out-h', '풀어야 할 과제'));
+    ['유저를 끌어들이는 기능', '커뮤니티', '마케팅'].forEach(function (t) { out.appendChild(el('span', 'res-chip', t)); });
+    box.appendChild(out);
+    box.appendChild(el('p', 'viz-note', '구상 단계 — 시장 규모 등 수치는 출처를 확인한 뒤 제시합니다.'));
+  };
 })(typeof window !== 'undefined' ? window : this);

@@ -4,21 +4,18 @@ const { test, expect } = require('@playwright/test');
 const tile = (page, pid, i) => page.locator(`#${pid} article.step`).nth(i);
 const box = async (loc) => /** @type {{x:number,y:number,width:number,height:number}} */ (await loc.boundingBox());
 
-test('3+2 at desktop', async ({ page }) => {
+test('3+3 at desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const b = [];
-  for (let i = 0; i < 5; i++) b.push(await box(tile(page, 'p01', i)));
-  expect(Math.abs(b[0].y - b[1].y)).toBeLessThan(1);
-  expect(Math.abs(b[0].y - b[2].y)).toBeLessThan(1);
-  expect(Math.abs(b[3].y - b[4].y)).toBeLessThan(1);
+  for (let i = 0; i < 6; i++) b.push(await box(tile(page, 'p01', i)));
+  for (const [i, j] of [[0, 1], [0, 2], [3, 4], [3, 5]]) expect(Math.abs(b[i].y - b[j].y)).toBeLessThan(1);
   expect(b[3].y).toBeGreaterThan(b[0].y + b[0].height - 1);
-  expect(b[3].x).toBeGreaterThan(b[0].x);
-  expect(Math.abs(b[3].width - b[0].width)).toBeLessThan(2);
-  // bottom row centred
-  const left = b[3].x - b[0].x;
-  const right = (b[2].x + b[2].width) - (b[4].x + b[4].width);
-  expect(Math.abs(left - right)).toBeLessThan(2);
+  for (let i = 0; i < 3; i++) {
+    expect(Math.abs(b[i + 3].x - b[i].x)).toBeLessThan(1);
+    expect(Math.abs(b[i + 3].width - b[i].width)).toBeLessThan(1);
+  }
 });
 
 test('panel opens directly under its own tile', async ({ page }) => {
@@ -41,7 +38,7 @@ test('single column on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const xs = [];
-  for (let i = 0; i < 5; i++) xs.push((await box(tile(page, 'p02', i))).x);
+  for (let i = 0; i < 6; i++) xs.push((await box(tile(page, 'p02', i))).x);
   expect(new Set(xs.map((x) => Math.round(x))).size).toBe(1);
 });
 

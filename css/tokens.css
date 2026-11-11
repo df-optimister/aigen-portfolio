@@ -15,7 +15,8 @@
   --pitch: #0E3B2E;
   --pitch-line: #5f8f7c;
 
-  --font: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* Playfair Display has no Hangul: Latin/numerals use Playfair, Korean falls through to Noto Serif KR */
+  --font: "Playfair Display", "Noto Serif KR", "Nanum Myeongjo", Georgia, serif;
   --fs-body: 16px;
   --fs-impact: clamp(24px, 3vw, 32px);
   --fs-tile-impact: clamp(17px, 1.6vw, 20px);

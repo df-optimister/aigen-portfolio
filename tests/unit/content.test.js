@@ -6,7 +6,9 @@ const C = require('../../js/content.js');
 
 // Items the user changed on purpose after reviewing the page (Task 10).
 // Key format: '<projectId>.<stepNo>.<field>' e.g. 'p01.03.bullets'.
-const USER_EDITED = new Set([]);
+const USER_EDITED = new Set([
+  'p01.05.bullets', // 2026-11-11: defensive off-ball (수비 커버·공격수 방향 제한) added at the user's request
+]);
 
 const PLAN_MD = path.resolve(__dirname, '../../../SK_AIGEN_포트폴리오_웹페이지_계획.md');
 
@@ -37,13 +39,27 @@ function allStrings(obj, out = []) {
   return out;
 }
 
-test('two projects, five steps each, fixed order', () => {
+test('two projects, six steps each, fixed order', () => {
   assert.deepEqual(C.projects.map((p) => p.id), ['p01', 'p02']);
   for (const p of C.projects) {
-    assert.equal(p.steps.length, 5);
-    assert.deepEqual(p.steps.map((s) => s.no), ['01', '02', '03', '04', '05']);
-    assert.deepEqual(p.steps.map((s) => s.name), ['도전의 배경', '도전 과정과 부여한 가치', '실행과 결과', '한계와 돌아보기', 'AIGEN과 함께할 발전 방향']);
+    assert.equal(p.steps.length, 6);
+    assert.deepEqual(p.steps.map((s) => s.no), ['01', '02', '03', '04', '05', '06']);
+    assert.deepEqual(p.steps.map((s) => s.name), ['도전의 배경', '도전 과정과 부여한 가치', '실행과 결과', '한계와 돌아보기', 'AIGEN과 함께할 발전 방향', '이 프로젝트에서 탄생한 서비스']);
   }
+});
+
+test('project 1 step 05 covers attacking and defensive off-ball movement', () => {
+  const t = C.projects[0].steps[4].bullets.join('\n');
+  for (const s of ['침투', '공간 창출', '수비 커버', '공격수 방향 제한']) assert.ok(t.includes(s), s);
+});
+
+test('step 06 describes the service born from each project', () => {
+  const [a, b] = C.projects.map((p) => p.steps[5]);
+  assert.match(a.impact, /오프더볼/);
+  assert.ok(a.bullets.join('\n').includes('수비'));
+  assert.match(b.impact, /전통주/);
+  assert.ok(b.bullets.some((x) => x.includes('구상')));
+  for (const s of [a, b]) assert.ok(s.bullets.length >= 4);
 });
 
 test('keywords 3-4 per step', () => {
@@ -57,7 +73,7 @@ test('copy matches plan §4 verbatim', (t) => {
   const plan = parsePlanSection4(fs.readFileSync(PLAN_MD, 'utf8'));
   assert.equal(plan.length, 2);
   C.projects.forEach((p, pi) => {
-    p.steps.forEach((s, si) => {
+    p.steps.slice(0, 5).forEach((s, si) => {
       const ps = plan[pi].steps[si];
       assert.equal(s.name, ps.name);
       for (const field of ['keywords', 'impact', 'bullets']) {
@@ -68,13 +84,13 @@ test('copy matches plan §4 verbatim', (t) => {
   });
 });
 
-test('only step 05 is plan', () => {
-  for (const p of C.projects) assert.deepEqual(p.steps.map((s) => s.plan), [false, false, false, false, true]);
+test('only steps 05 and 06 are plan', () => {
+  for (const p of C.projects) assert.deepEqual(p.steps.map((s) => s.plan), [false, false, false, false, true, true]);
 });
 
 test('viz ids are fixed', () => {
-  assert.deepEqual(C.projects[0].steps.map((s) => s.viz), ['p01-pitch', 'p01-pipeline', 'p01-results', 'p01-snapshot', 'p01-roadmap']);
-  assert.deepEqual(C.projects[1].steps.map((s) => s.viz), ['p02-loop', 'p02-proposal', 'p02-build', 'p02-timeline', 'p02-flywheel']);
+  assert.deepEqual(C.projects[0].steps.map((s) => s.viz), ['p01-pitch', 'p01-pipeline', 'p01-results', 'p01-snapshot', 'p01-roadmap', 'p01-service']);
+  assert.deepEqual(C.projects[1].steps.map((s) => s.viz), ['p02-loop', 'p02-proposal', 'p02-build', 'p02-timeline', 'p02-flywheel', 'p02-service']);
 });
 
 test('no overclaiming phrases', () => {
@@ -93,9 +109,16 @@ test('meta, tracks, links', () => {
   assert.equal(C.meta.label, 'SK AIGEN 1기 지원 포트폴리오');
   assert.equal(C.meta.nameKo, '김근우');
   assert.equal(C.meta.nameEn, 'Keunwoo Kim');
-  assert.ok(C.meta.taglineOptions.length >= 2 && C.meta.taglineOptions.length <= 3);
-  assert.ok(C.meta.taglineOptions.includes(C.meta.tagline));
-  assert.deepEqual(C.tracks, [{ label: '1지망 문화/예술/스포츠', primary: true }, { label: '2지망 창업/비즈니스', primary: false }]);
+  for (const pid of ['p01', 'p02']) {
+    const t = C.meta.taglines[pid];
+    assert.ok(t.startsWith('“') && t.endsWith('”'), `${pid} tagline must be quoted`);
+  }
+  assert.notEqual(C.meta.taglines.p01, C.meta.taglines.p02);
+  assert.ok(C.meta.choiceNote.includes('하나'));
+  assert.deepEqual(C.tracks, [
+    { label: '1지망 문화/예술/스포츠', project: 'p01', plan: '1안' },
+    { label: '2지망 창업/비즈니스', project: 'p02', plan: '2안' },
+  ]);
   assert.deepEqual(C.links, {
     linkedin: 'https://linkedin.com/in/keunwoo-kim-78138820b',
     github: 'https://github.com/df-optimister',

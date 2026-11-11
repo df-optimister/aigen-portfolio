@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { makeDom, BASE_SCRIPTS } = require('./helpers/dom');
 
-const IDS = ['p02-loop', 'p02-proposal', 'p02-build', 'p02-timeline', 'p02-flywheel'];
+const IDS = ['p02-loop', 'p02-proposal', 'p02-build', 'p02-timeline', 'p02-flywheel', 'p02-service'];
 const SCRIPTS = [...BASE_SCRIPTS, 'js/viz/p01.js', 'js/viz/p02.js'];
 
 function draw(id) {
@@ -13,7 +13,7 @@ function draw(id) {
   return { w, el };
 }
 
-test('all five p02 builders registered', () => {
+test('all six p02 builders registered', () => {
   const w = makeDom(SCRIPTS);
   for (const id of IDS) assert.equal(typeof w.VIZ[id], 'function', id);
 });
@@ -62,4 +62,11 @@ test('p02-flywheel is marked as a plan with no market numbers', () => {
   assert.ok(!/\d+\s*(억|조|%)/.test(t));
   const rows = el.querySelectorAll('table.gap-table tbody tr');
   assert.equal(rows.length, w.PORTFOLIO_CONTENT.next.matrix.filter((m) => m.project === 'p02').length);
+});
+
+test('p02-service is a marketplace concept with no market numbers', () => {
+  const { el } = draw('p02-service');
+  const t = el.textContent;
+  for (const s of ['판매자', '유저', '커뮤니티', '전통주', '구상']) assert.ok(t.includes(s), s);
+  assert.ok(!/\d+\s*(억|조|%)/.test(t));
 });

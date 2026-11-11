@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { makeDom, BASE_SCRIPTS } = require('./helpers/dom');
 
-const IDS = ['p01-pitch', 'p01-pipeline', 'p01-results', 'p01-snapshot', 'p01-roadmap'];
+const IDS = ['p01-pitch', 'p01-pipeline', 'p01-results', 'p01-snapshot', 'p01-roadmap', 'p01-service'];
 
 function draw(id) {
   const w = makeDom([...BASE_SCRIPTS, 'js/viz/p01.js']);
@@ -12,7 +12,7 @@ function draw(id) {
   return { w, el };
 }
 
-test('all five p01 builders registered', () => {
+test('all six p01 builders registered', () => {
   const w = makeDom([...BASE_SCRIPTS, 'js/viz/p01.js']);
   for (const id of IDS) assert.equal(typeof w.VIZ[id], 'function', id);
 });
@@ -91,4 +91,17 @@ test('p01-roadmap has stages, AI marks, gap table and video mount', () => {
   assert.ok(el.querySelector('.video-demo-mount'));
   const rows = el.querySelectorAll('table.gap-table tbody tr');
   assert.equal(rows.length, w.PORTFOLIO_CONTENT.next.matrix.filter((m) => m.project === 'p01').length);
+});
+
+test('p01-roadmap classifies attacking and defensive off-ball movement', () => {
+  const { el } = draw('p01-roadmap');
+  assert.ok(el.textContent.includes('수비'));
+});
+
+test('p01-service shows attack and defence off-ball evaluation and outputs', () => {
+  const { el } = draw('p01-service');
+  const t = el.textContent;
+  for (const s of ['공격', '수비', '침투', '공간 창출', '수비 커버', '방향 제한', '스카우팅 리포트']) assert.ok(t.includes(s), s);
+  assert.ok(el.querySelectorAll('.atk-arrow').length >= 2);
+  assert.ok(el.querySelectorAll('.def-arrow').length >= 2);
 });

@@ -12,7 +12,7 @@
   .hero { min-height: 0; }
   .hero-inner { padding: 28px 24px 24px; }
   .hero { border-radius: 10px; }
-  .hero-pitch { width: 220px; right: 0; }
+  .hero-art-wrap { width: 220px; right: 0; }
 
   .project, .next { padding: 0 3px; min-height: 0; max-width: none; }
   #p01 { margin-top: 28px; }

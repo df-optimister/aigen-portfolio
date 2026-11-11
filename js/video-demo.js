@@ -144,7 +144,10 @@
 
     function tryPlay() {
       var pr = video.play();
-      if (pr && pr.catch) pr.catch(function () { fig.classList.add('is-manual'); play.hidden = false; });
+      if (pr && pr.catch) pr.catch(function (err) {
+        // AbortError = a pause() (e.g. scrolled away) interrupted this play(); not an autoplay block.
+        if (err && err.name === 'NotAllowedError') { fig.classList.add('is-manual'); play.hidden = false; }
+      });
     }
 
     play.addEventListener('click', function () {

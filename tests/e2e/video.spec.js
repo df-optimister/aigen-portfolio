@@ -102,3 +102,23 @@ test('expanded view covers the page and closes with Escape', async ({ page }) =>
   await expect(page.locator('.demo.is-expanded')).toHaveCount(0);
   await expect(page.locator('#p01 article.step').nth(4).locator('.demo')).toHaveCount(1);
 });
+
+test('an interrupted play() (AbortError) does not disable autoplay', async ({ page }) => {
+  await page.addInitScript(() => {
+    const real = HTMLMediaElement.prototype.play;
+    let first = true;
+    HTMLMediaElement.prototype.play = function () {
+      if (first) { first = false; return Promise.reject(new DOMException('interrupted by pause()', 'AbortError')); }
+      return real.call(this);
+    };
+  });
+  await page.goto('/');
+  const v = await openDemo(page);
+  await v.scrollIntoViewIfNeeded();           // 1st play() → AbortError
+  await page.waitForTimeout(300);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await v.scrollIntoViewIfNeeded();           // must autoplay again
+  await expect(page.locator('#p01 .demo')).not.toHaveClass(/is-manual/);
+  await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 8000 }).toBe(false);
+});

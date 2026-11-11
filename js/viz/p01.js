@@ -229,6 +229,17 @@
   VIZ['p01-roadmap'] = function (box) {
     var mount = el('div', 'video-demo-mount');
     box.appendChild(mount);
+    if (root.mountVideoDemo) {
+      var D = root.PORTFOLIO_CONTENT.demo;
+      root.mountVideoDemo(mount, {
+        src: 'assets/demo/clip.mp4',
+        poster: 'assets/demo/poster.jpg',
+        tracksUrl: 'assets/demo/tracks.json',
+        label: D.label,
+        attribution: D.attribution,
+        datasetUrl: D.datasetUrl,
+      });
+    }
 
     var stages = [
       ['영상', '경기 영상 입력', false],

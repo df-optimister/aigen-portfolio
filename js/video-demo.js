@@ -106,8 +106,9 @@
         }
         if (hot && p[1] != null) {
           gHl.appendChild(s('circle', { cx: p[1] * 1280, cy: p[2] * 720, r: 16, class: 'hl-marker' }));
-          var tx = Math.min(p[1] * 1280 + 22, 1060);
-          var lbl = s('text', { x: tx, y: p[2] * 720 - 18, class: 'hl-label' });
+          // label on the side with room: right of the player on the left half, left of it on the right half
+          var right = p[1] < 0.5;
+          var lbl = s('text', { x: p[1] * 1280 + (right ? 22 : -22), y: p[2] * 720 - 18, class: 'hl-label', 'text-anchor': right ? 'start' : 'end' });
           lbl.textContent = data.highlight.label;
           gHl.appendChild(lbl);
         }

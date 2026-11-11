@@ -172,7 +172,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(11, 22, 48, .97);
+  background: var(--navy-900);
   padding: 20px max(16px, calc((100vw - 1100px) / 2));
   overflow-y: auto;
   display: grid;

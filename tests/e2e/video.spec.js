@@ -150,3 +150,20 @@ test('manually started video pauses when scrolled away', async ({ page }) => {
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 4000 }).toBe(true);
 });
+
+test('highlight label stays inside the video frame near the right edge', async ({ page }) => {
+  await page.goto('./');
+  const v = await openDemo(page);
+  await v.scrollIntoViewIfNeeded();
+  await expect.poll(() => v.evaluate((el) => el.readyState), { timeout: 8000 }).toBeGreaterThanOrEqual(2);
+  await v.evaluate(async (el, tt) => {
+    el.pause();
+    el.currentTime = tt;
+    await new Promise((r) => el.addEventListener('seeked', r, { once: true }));
+  }, TRACKS.highlight.t1 - 0.2);
+  const label = page.locator('#p01 .demo svg.overlay .hl-label');
+  await expect(label).toHaveCount(1);
+  const bb = await label.evaluate((el) => { const b = el.getBBox(); return { x: b.x, w: b.width }; });
+  expect(bb.x).toBeGreaterThanOrEqual(0);
+  expect(bb.x + bb.w).toBeLessThanOrEqual(1280);
+});

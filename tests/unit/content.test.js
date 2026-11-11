@@ -1,0 +1,118 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const C = require('../../js/content.js');
+
+// Items the user changed on purpose after reviewing the page (Task 10).
+// Key format: '<projectId>.<stepNo>.<field>' e.g. 'p01.03.bullets'.
+const USER_EDITED = new Set([]);
+
+const PLAN_MD = path.resolve(__dirname, '../../../SK_AIGEN_포트폴리오_웹페이지_계획.md');
+
+function parsePlanSection4(md) {
+  const text = md.replace(/\r\n/g, '\n');
+  const start = text.indexOf('\n## 4.');
+  const end = text.indexOf('\n## 5.');
+  const sec = text.slice(start, end).split('\n');
+  const projects = [];
+  let proj = null;
+  let step = null;
+  for (const line of sec) {
+    if (line.startsWith('### ')) { proj = { steps: [] }; projects.push(proj); step = null; continue; }
+    if (!proj) continue;
+    if (line.startsWith('#### ')) { step = { name: line.slice(5).trim(), keywords: null, impact: null, bullets: [] }; proj.steps.push(step); continue; }
+    if (!step) continue;
+    if (line.startsWith('키워드:')) { step.keywords = line.slice(4).trim().split(' · ').map((s) => s.trim()); continue; }
+    if (line.startsWith('- ')) { step.bullets.push(line.slice(2).trim()); continue; }
+    if (line.trim() && step.keywords && step.impact === null) step.impact = line.trim();
+  }
+  return projects;
+}
+
+function allStrings(obj, out = []) {
+  if (typeof obj === 'string') out.push(obj);
+  else if (Array.isArray(obj)) obj.forEach((v) => allStrings(v, out));
+  else if (obj && typeof obj === 'object') Object.values(obj).forEach((v) => allStrings(v, out));
+  return out;
+}
+
+test('two projects, five steps each, fixed order', () => {
+  assert.deepEqual(C.projects.map((p) => p.id), ['p01', 'p02']);
+  for (const p of C.projects) {
+    assert.equal(p.steps.length, 5);
+    assert.deepEqual(p.steps.map((s) => s.no), ['01', '02', '03', '04', '05']);
+    assert.deepEqual(p.steps.map((s) => s.name), ['도전의 배경', '도전 과정과 부여한 가치', '실행과 결과', '한계와 돌아보기', 'AIGEN과 함께할 발전 방향']);
+  }
+});
+
+test('keywords 3-4 per step', () => {
+  for (const p of C.projects) for (const s of p.steps) {
+    assert.ok(s.keywords.length >= 3 && s.keywords.length <= 4, `${p.id}.${s.no} has ${s.keywords.length} keywords`);
+  }
+});
+
+test('copy matches plan §4 verbatim', (t) => {
+  if (!fs.existsSync(PLAN_MD)) { t.skip('plan markdown not present'); return; }
+  const plan = parsePlanSection4(fs.readFileSync(PLAN_MD, 'utf8'));
+  assert.equal(plan.length, 2);
+  C.projects.forEach((p, pi) => {
+    p.steps.forEach((s, si) => {
+      const ps = plan[pi].steps[si];
+      assert.equal(s.name, ps.name);
+      for (const field of ['keywords', 'impact', 'bullets']) {
+        if (USER_EDITED.has(`${p.id}.${s.no}.${field}`)) continue;
+        assert.deepEqual(s[field], ps[field], `${p.id}.${s.no}.${field}`);
+      }
+    });
+  });
+});
+
+test('only step 05 is plan', () => {
+  for (const p of C.projects) assert.deepEqual(p.steps.map((s) => s.plan), [false, false, false, false, true]);
+});
+
+test('viz ids are fixed', () => {
+  assert.deepEqual(C.projects[0].steps.map((s) => s.viz), ['p01-pitch', 'p01-pipeline', 'p01-results', 'p01-snapshot', 'p01-roadmap']);
+  assert.deepEqual(C.projects[1].steps.map((s) => s.viz), ['p02-loop', 'p02-proposal', 'p02-build', 'p02-timeline', 'p02-flywheel']);
+});
+
+test('no overclaiming phrases', () => {
+  const all = allStrings(C).join('\n');
+  for (const bad of ['출시했', '출시 완료', '계약 체결', '실사용자', '매출', 'SK 로고']) {
+    assert.ok(!all.includes(bad), `found "${bad}"`);
+  }
+});
+
+test('demo label and attribution exact', () => {
+  assert.equal(C.demo.label, '공개 데이터로 만든 개념 시연 · 논문 범위 아님');
+  assert.equal(C.demo.attribution, 'Video & tracking data: SoccerTrack v2 (Scott, Uchida, Kuroda, Kim, Fujii, 2025, arXiv:2508.01802), CC BY 4.0');
+});
+
+test('meta, tracks, links', () => {
+  assert.equal(C.meta.label, 'SK AIGEN 1기 지원 포트폴리오');
+  assert.equal(C.meta.nameKo, '김근우');
+  assert.equal(C.meta.nameEn, 'Keunwoo Kim');
+  assert.ok(C.meta.taglineOptions.length >= 2 && C.meta.taglineOptions.length <= 3);
+  assert.ok(C.meta.taglineOptions.includes(C.meta.tagline));
+  assert.deepEqual(C.tracks, [{ label: '1지망 문화/예술/스포츠', primary: true }, { label: '2지망 창업/비즈니스', primary: false }]);
+  assert.deepEqual(C.links, {
+    linkedin: 'https://linkedin.com/in/keunwoo-kim-78138820b',
+    github: 'https://github.com/df-optimister',
+    repoThesis: 'https://github.com/df-optimister/Tracking-enhanced-VAEP',
+    repoBonbab: 'https://github.com/df-optimister/bonbab-app',
+  });
+});
+
+test('next: matrix resources and roadmap', () => {
+  const R = ['현장 전문가 멘토', '동료 교류·협업', 'AI'];
+  assert.ok(C.next.matrix.length >= 4);
+  for (const m of C.next.matrix) {
+    assert.ok(['p01', 'p02'].includes(m.project));
+    assert.ok(R.includes(m.resource), m.resource);
+    assert.ok(m.gap && typeof m.gap === 'string');
+  }
+  assert.deepEqual(C.next.roadmap.map((r) => r.phase), ['YEAR 1 · FIELD', 'YEAR 1 · VALUE CREATION', 'YEAR 2', 'Demo Day']);
+  const p02Phases = C.next.roadmap.filter((r) => r.items.some((i) => i.project === 'p02')).map((r) => r.phase);
+  assert.deepEqual(p02Phases, ['YEAR 1 · VALUE CREATION', 'YEAR 2']);
+});

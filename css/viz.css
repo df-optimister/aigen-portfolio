@@ -8,3 +8,80 @@
 }
 .board > svg { display: block; width: 100%; height: auto; }
 .viz-placeholder { margin: 0; min-height: 132px; display: grid; place-items: center; font-size: 13px; letter-spacing: .08em; opacity: .7; }
+
+/* ---- shared svg type ---- */
+.board svg text { font-family: var(--font); }
+.cap-t { font-size: 12.5px; font-weight: 800; fill: #fff; }
+.cap-s { font-size: 10.5px; fill: var(--on-dark-2); }
+.lbl { font-size: 11px; font-weight: 700; }
+.lbl-hot { fill: var(--burgundy-soft); }
+.lbl-off { fill: #8a96b8; }
+.lbl-on { fill: #fff; opacity: 0; }
+.arrow-head { fill: var(--on-dark-2); }
+
+/* ---- pitch ---- */
+.pitch-turf { fill: #0f2c2a; }
+.pitch-line { fill: none; stroke: rgba(201, 209, 230, .32); stroke-width: 1; }
+.pitch-spot { fill: rgba(201, 209, 230, .5); }
+.dot { transition: fill .35s, stroke .35s, opacity .35s; }
+.dot-off { fill: #3a4668; stroke: none; }
+.dot-on.team-a { fill: #E9ECF4; }
+.dot-on.team-b { fill: var(--navy-900); stroke: #9fb0d6; stroke-width: 1.6; }
+.dot-ball { fill: var(--burgundy-soft); }
+.ball-halo { fill: none; stroke: var(--burgundy-soft); stroke-width: 1.2; opacity: .55; }
+.ball { fill: #fff; }
+.run { stroke: #E9ECF4; stroke-width: 1.6; stroke-dasharray: 4 3; opacity: 0; transition: opacity .35s; }
+.pitch-viz.is-on .run { opacity: .9; }
+.pitch-viz.is-on .lbl-off { opacity: 0; }
+.pitch-viz.is-on .lbl-on { opacity: 1; }
+.viz-toggle {
+  margin-top: 10px;
+  font: 700 13px var(--font);
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--burgundy-soft);
+  background: transparent;
+  color: var(--burgundy-soft);
+  cursor: pointer;
+}
+.viz-toggle[aria-pressed="true"] { background: var(--burgundy-soft); color: var(--navy-900); }
+
+/* ---- pipeline ---- */
+.node rect { fill: var(--navy-800); stroke: var(--navy-line); stroke-width: 1.2; }
+.node.is-hot rect { fill: var(--burgundy); stroke: var(--burgundy-soft); }
+.node-t { font-size: 12.5px; font-weight: 800; fill: #fff; }
+.node-s { font-size: 10px; fill: var(--on-dark-2); }
+.node.is-hot .node-s { fill: #f4d3dc; }
+.flow { fill: none; stroke: #6b7aa3; stroke-width: 1.4; }
+
+/* ---- results ---- */
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--navy-800); border: 1px solid var(--navy-line); border-radius: 8px; padding: 10px 8px; text-align: center; }
+.kpi-v { display: block; font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -.01em; line-height: 1.1; }
+.kpi:first-child .kpi-v { color: var(--burgundy-soft); }
+.kpi-l { display: block; margin-top: 4px; font-size: 11.5px; color: var(--on-dark-2); }
+.viz-note { margin: 8px 0 12px; font-size: 11.5px; color: #8a96b8; }
+.bar { fill: #3d4f7c; }
+.bar.is-chosen { fill: var(--burgundy-soft); }
+.bar-l { font-size: 11.5px; fill: var(--on-dark-2); }
+.bar-v { font-size: 11px; font-weight: 700; fill: #fff; }
+.axis { stroke: var(--on-dark-2); stroke-width: 1; }
+.tick { font-size: 10px; fill: #8a96b8; }
+
+/* ---- snapshot ---- */
+.visible-area { fill: rgba(231, 160, 180, .14); stroke: var(--burgundy-soft); stroke-width: 1; stroke-dasharray: 3 3; }
+.trail { fill: none; stroke: rgba(233, 236, 244, .65); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.trail.is-hot { stroke: var(--burgundy-soft); stroke-width: 2.2; }
+
+/* ---- roadmap ---- */
+.road { stroke: var(--navy-line); stroke-width: 2; }
+.road-node { fill: var(--navy-900); stroke: var(--on-dark-2); stroke-width: 2; }
+.road-node.is-hot { fill: var(--burgundy-soft); stroke: var(--burgundy-soft); }
+.road-t { font-size: 13px; font-weight: 800; fill: #fff; }
+.road-s { font-size: 10.5px; fill: var(--on-dark-2); }
+.ai-mark rect { fill: rgba(231, 160, 180, .16); stroke: var(--burgundy-soft); stroke-width: 1; }
+.ai-t { font-size: 10px; font-weight: 800; fill: var(--burgundy-soft); }
+.gap-table { width: 100%; margin-top: 14px; border-collapse: collapse; font-size: 13px; }
+.gap-table th { text-align: left; font-size: 11.5px; font-weight: 700; color: #8a96b8; padding: 6px 4px; border-bottom: 1px solid var(--navy-line); }
+.gap-table td { padding: 8px 4px; border-bottom: 1px solid rgba(34, 50, 90, .6); color: var(--on-dark); vertical-align: top; }
+.res-chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; background: rgba(231, 160, 180, .14); color: var(--burgundy-soft); white-space: nowrap; }

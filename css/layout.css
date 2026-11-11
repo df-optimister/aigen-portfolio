@@ -1,5 +1,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* lining numerals: Playfair defaults to old-style (01 reads as o1). Set on every element because form
+   controls do not inherit it, and !important because the font shorthand (buttons, svg text) resets it. */
+*, *::before, *::after { font-feature-settings: "lnum" 1 !important; }
 /* smooth scrolling is switched on after load so the initial #hash jump isn't animated toward a stale target */
 html.smooth { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html.smooth { scroll-behavior: auto; } }

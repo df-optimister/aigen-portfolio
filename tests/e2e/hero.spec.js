@@ -23,3 +23,13 @@ test('clicking a 지망 swaps tagline, highlighted card and hero art', async ({ 
   await expect(page.locator('#hero .hero-art[data-project="p02"]')).toHaveCSS('opacity', '1', { timeout: 3000 });
   await expect(page.locator('#hero .hero-art[data-project="p01"]')).toHaveCSS('opacity', '0', { timeout: 3000 });
 });
+
+test('numerals are lining (not old-style) everywhere, including buttons and SVG text', async ({ page }) => {
+  await page.goto('./');
+  await page.locator('#p01 article.step').nth(2).locator('button.step-head').click();
+  const sels = ['body', '.step-no', '#hero .track', '#hero .pb-o text', '.kpi-v', '.expand-all'];
+  for (const sel of sels) {
+    const ffs = await page.locator(sel).first().evaluate((el) => getComputedStyle(el).fontFeatureSettings);
+    expect(ffs, sel).toContain('lnum');
+  }
+});

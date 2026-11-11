@@ -189,3 +189,5 @@
   .demo.is-expanded { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "stage" "mini" "cap"; }
 }
 body.demo-open { overflow: hidden; }
+.play-btn.is-playing { left: auto; top: auto; right: 8px; bottom: 8px; transform: none; font-size: 12px; padding: 6px 11px; opacity: .88; }
+.play-btn:focus-visible { outline: 3px solid var(--burgundy-soft); outline-offset: 2px; }

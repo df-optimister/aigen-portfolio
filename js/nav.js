@@ -36,6 +36,24 @@
 
     setNavHeight();
     spy();
+
+    // Re-anchor a #hash target once web fonts have settled (font swap shifts layout),
+    // then enable smooth scrolling for later in-page navigation.
+    function reanchor() {
+      var id = root.location.hash.slice(1);
+      var target = id && doc.getElementById(id);
+      if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start', behavior: 'auto' });
+    }
+    var fontsReady = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
+    function settle() {
+      fontsReady.then(function () {
+        setNavHeight();
+        reanchor();
+        doc.documentElement.classList.add('smooth');
+      });
+    }
+    if (doc.readyState === 'complete') settle();
+    else root.addEventListener('load', settle, { once: true });
     root.addEventListener('scroll', onScroll, { passive: true });
     root.addEventListener('resize', function () { setNavHeight(); onScroll(); });
 

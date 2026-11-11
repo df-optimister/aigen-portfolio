@@ -1,6 +1,8 @@
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { -webkit-text-size-adjust: 100%; }
+/* smooth scrolling is switched on after load so the initial #hash jump isn't animated toward a stale target */
+html.smooth { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html.smooth { scroll-behavior: auto; } }
 body {
   margin: 0;
   font-family: var(--font);
@@ -14,7 +16,10 @@ body {
 img, svg, video { max-width: 100%; }
 a { color: inherit; }
 h1, h2, h3 { line-height: 1.25; margin: 0; }
-:focus-visible { outline: 3px solid var(--burgundy-soft); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 3px solid var(--burgundy); outline-offset: 2px; border-radius: 4px; }
+.toc :focus-visible, .hero :focus-visible, .board :focus-visible, .contact :focus-visible, .demo.is-expanded :focus-visible { outline-color: var(--burgundy-soft); }
+/* .step clips overflow, so the tile ring is drawn inside the button */
+.step-head:focus-visible { outline: 3px solid var(--burgundy); outline-offset: -3px; border-radius: var(--radius); }
 
 main > section, .contact { scroll-margin-top: calc(var(--nav-h) + 8px); }
 

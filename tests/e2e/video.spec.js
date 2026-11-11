@@ -122,3 +122,31 @@ test('an interrupted play() (AbortError) does not disable autoplay', async ({ pa
   await expect(page.locator('#p01 .demo')).not.toHaveClass(/is-manual/);
   await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 8000 }).toBe(false);
 });
+
+test('user can pause autoplay and it stays paused', async ({ page }) => {
+  await page.goto('/');
+  const v = await openDemo(page);
+  await v.scrollIntoViewIfNeeded();
+  await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 8000 }).toBe(false);
+  const btn = page.locator('#p01 .demo .play-btn');
+  await expect(btn).toBeVisible();
+  await btn.click();
+  expect(await v.evaluate((el) => el.paused)).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await v.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(800);
+  expect(await v.evaluate((el) => el.paused)).toBe(true);
+});
+
+test('manually started video pauses when scrolled away', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const v = await openDemo(page);
+  await v.scrollIntoViewIfNeeded();
+  await page.locator('#p01 .demo .play-btn').click();
+  await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 8000 }).toBe(false);
+  await expect(page.locator('#p01 .demo .play-btn')).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 4000 }).toBe(true);
+});

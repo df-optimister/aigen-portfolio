@@ -134,8 +134,14 @@
     }
     function startLoop() { if (!looping) { looping = true; loop(); } }
 
-    video.addEventListener('play', function () { play.hidden = true; startLoop(); });
-    video.addEventListener('pause', function () { if (reduced() || fig.classList.contains('is-manual')) play.hidden = false; });
+    function setBtn(playing) {
+      play.hidden = false;
+      play.classList.toggle('is-playing', playing);
+      play.textContent = playing ? '❚❚ 일시정지' : '▶ 재생';
+      play.setAttribute('aria-label', playing ? '영상 일시정지' : '영상 재생');
+    }
+    video.addEventListener('play', function () { setBtn(true); startLoop(); });
+    video.addEventListener('pause', function () { if (!fig.classList.contains('is-error')) setBtn(false); });
     video.addEventListener('seeked', function () { draw(video.currentTime); });
     video.addEventListener('error', function () {
       fig.classList.add('is-error');
@@ -146,23 +152,25 @@
       var pr = video.play();
       if (pr && pr.catch) pr.catch(function (err) {
         // AbortError = a pause() (e.g. scrolled away) interrupted this play(); not an autoplay block.
-        if (err && err.name === 'NotAllowedError') { fig.classList.add('is-manual'); play.hidden = false; }
+        if (err && err.name === 'NotAllowedError') { fig.classList.add('is-manual'); setBtn(false); }
       });
     }
 
+    // Any press puts the viewer in charge: no more auto-resume, but still pause offscreen.
     play.addEventListener('click', function () {
       fig.classList.add('is-manual');
       if (video.paused) tryPlay(); else video.pause();
     });
 
-    if (reduced()) {
-      play.hidden = false;
-    } else if ('IntersectionObserver' in root) {
+    var autoplay = !reduced();
+    if (!autoplay) setBtn(false);
+    if ('IntersectionObserver' in root) {
       var io = new root.IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
-          if (fig.classList.contains('is-error') || fig.classList.contains('is-manual')) return;
-          if (e.isIntersecting && e.intersectionRatio >= 0.5) tryPlay();
-          else if (!video.paused) video.pause();
+          if (fig.classList.contains('is-error')) return;
+          var visible = e.isIntersecting && e.intersectionRatio >= 0.5;
+          if (!visible) { if (!video.paused) video.pause(); return; }
+          if (autoplay && !fig.classList.contains('is-manual')) tryPlay();
         });
       }, { threshold: [0, 0.5, 1] });
       io.observe(stage);

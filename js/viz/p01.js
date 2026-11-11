@@ -51,7 +51,30 @@
     return e;
   }
 
-  root.VIZKIT = { svg: svg, rootSvg: rootSvg, text: text, pitch: pitch, m2p: m2p, el: el };
+  /** Gap ↔ AIGEN resource table for one project, from content.next.matrix. */
+  function gapTable(projectId, gapHeading) {
+    var rows = root.PORTFOLIO_CONTENT.next.matrix.filter(function (m) { return m.project === projectId; });
+    var table = el('table', 'gap-table');
+    var thead = el('thead');
+    var trh = el('tr');
+    trh.appendChild(el('th', null, gapHeading));
+    trh.appendChild(el('th', null, '메울 AIGEN 자원'));
+    thead.appendChild(trh);
+    table.appendChild(thead);
+    var tb = el('tbody');
+    rows.forEach(function (r) {
+      var tr = el('tr');
+      tr.appendChild(el('td', null, r.gap));
+      var td = el('td');
+      td.appendChild(el('span', 'res-chip', r.resource));
+      tr.appendChild(td);
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    return table;
+  }
+
+  root.VIZKIT = { svg: svg, rootSvg: rootSvg, text: text, pitch: pitch, m2p: m2p, el: el, gapTable: gapTable };
 
   var VIZ = root.VIZ = root.VIZ || {};
 
@@ -231,25 +254,6 @@
     });
     box.appendChild(s);
 
-    var C = root.PORTFOLIO_CONTENT;
-    var rows = C.next.matrix.filter(function (m) { return m.project === 'p01'; });
-    var table = el('table', 'gap-table');
-    var thead = el('thead');
-    var trh = el('tr');
-    trh.appendChild(el('th', null, '논문이 남긴 갭'));
-    trh.appendChild(el('th', null, '메울 AIGEN 자원'));
-    thead.appendChild(trh);
-    table.appendChild(thead);
-    var tb = el('tbody');
-    rows.forEach(function (r) {
-      var tr = el('tr');
-      tr.appendChild(el('td', null, r.gap));
-      var td = el('td');
-      td.appendChild(el('span', 'res-chip', r.resource));
-      tr.appendChild(td);
-      tb.appendChild(tr);
-    });
-    table.appendChild(tb);
-    box.appendChild(table);
+    box.appendChild(gapTable('p01', '논문이 남긴 갭'));
   };
 })(typeof window !== 'undefined' ? window : this);

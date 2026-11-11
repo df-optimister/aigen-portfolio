@@ -161,3 +161,12 @@ test('next matrix wording confirmed by the user', () => {
   assert.ok(p01.some((m) => m.gap === '상용화의 한계' && m.resource === 'AI'));
   assert.ok(!p01.some((m) => m.gap === '서로 다른 배경의 관점'));
 });
+
+test('project 1 service lists the three-stage rollout in order, with reasons', () => {
+  const b = C.projects[0].steps[5].bullets;
+  assert.ok(!b.includes('아래의 분석 서비스를 클라우드에서 제공하는 SaaS 사업'));
+  const idx = ['1단계', '2단계', '3단계'].map((k) => b.findIndex((x) => x.startsWith(k)));
+  idx.forEach((i) => assert.ok(i >= 0));
+  assert.ok(idx[0] < idx[1] && idx[1] < idx[2]);
+  idx.forEach((i) => assert.ok(b[i].includes('—'), 'each stage carries its reason after —'));
+});

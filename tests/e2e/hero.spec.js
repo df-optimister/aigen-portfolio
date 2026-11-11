@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('page text uses Playfair Display with Pretendard (as on aigen.sk.com) for Hangul', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const ff = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
   expect(ff).toMatch(/^"?Playfair Display"?,\s*"?Pretendard Variable"?/);
   await page.evaluate(() => document.fonts.ready);
@@ -14,7 +14,7 @@ test('page text uses Playfair Display with Pretendard (as on aigen.sk.com) for H
 });
 
 test('clicking a 지망 swaps tagline, highlighted card and hero art', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const t2 = page.locator('#hero button.track').nth(1);
   await t2.click();
   await expect(t2).toHaveAttribute('aria-pressed', 'true');

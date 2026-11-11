@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 
 async function goPrint(page) {
-  await page.goto('/');
+  await page.goto('./');
   // leave the grids in a mixed state first
   await page.locator('#p01 article.step').nth(1).locator('button.step-head').click();
   await page.locator('#p02 button.expand-all').click();
@@ -32,7 +32,7 @@ test('print hides chrome', async ({ page }) => {
 
 test('pdf under 20MB', async ({ page, isMobile }) => {
   test.skip(isMobile, 'pdf generated once on desktop');
-  await page.goto('/');
+  await page.goto('./');
   await page.emulateMedia({ media: 'print' });
   await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
   const pdf = await page.pdf({ format: 'A4', printBackground: true });

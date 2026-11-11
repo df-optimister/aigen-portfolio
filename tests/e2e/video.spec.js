@@ -15,14 +15,14 @@ async function openDemo(page) {
 }
 
 test('video has inline-safe attributes', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   for (const a of ['muted', 'playsinline', 'loop', 'poster']) await expect(v).toHaveAttribute(a, /.*/);
   expect(await v.evaluate((el) => el.muted)).toBe(true);
 });
 
 test('plays only when in view', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(400);
@@ -32,7 +32,7 @@ test('plays only when in view', async ({ page }) => {
 });
 
 test('overlay follows time', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await v.scrollIntoViewIfNeeded();
   await expect.poll(() => v.evaluate((el) => el.readyState), { timeout: 8000 }).toBeGreaterThanOrEqual(2);
@@ -54,7 +54,7 @@ test('overlay follows time', async ({ page }) => {
 
 test('reduced motion: no autoplay', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await v.scrollIntoViewIfNeeded();
   await page.waitForTimeout(800);
@@ -66,7 +66,7 @@ test('video 404 keeps poster and page usable', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.route('**/clip.mp4', (r) => r.abort());
-  await page.goto('/');
+  await page.goto('./');
   await openDemo(page);
   await page.locator('#p01 .demo').scrollIntoViewIfNeeded();
   await expect(page.locator('#p01 .demo')).toHaveClass(/is-error/, { timeout: 8000 });
@@ -79,14 +79,14 @@ test('video 404 keeps poster and page usable', async ({ page }) => {
 });
 
 test('label and attribution exact', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   await openDemo(page);
   await expect(page.locator('#p01 .demo .demo-badge')).toHaveText(LABEL);
   await expect(page.locator('#p01 .demo .demo-attr')).toHaveText(ATTR);
 });
 
 test('expanded view covers the page and closes with Escape', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   await openDemo(page);
   await page.locator('#p01 .demo').scrollIntoViewIfNeeded();
   await page.locator('.demo-expand').click();
@@ -112,7 +112,7 @@ test('an interrupted play() (AbortError) does not disable autoplay', async ({ pa
       return real.call(this);
     };
   });
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await v.scrollIntoViewIfNeeded();           // 1st play() → AbortError
   await page.waitForTimeout(300);
@@ -124,7 +124,7 @@ test('an interrupted play() (AbortError) does not disable autoplay', async ({ pa
 });
 
 test('user can pause autoplay and it stays paused', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await v.scrollIntoViewIfNeeded();
   await expect.poll(() => v.evaluate((el) => el.paused), { timeout: 8000 }).toBe(false);
@@ -141,7 +141,7 @@ test('user can pause autoplay and it stays paused', async ({ page }) => {
 
 test('manually started video pauses when scrolled away', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
+  await page.goto('./');
   const v = await openDemo(page);
   await v.scrollIntoViewIfNeeded();
   await page.locator('#p01 .demo .play-btn').click();

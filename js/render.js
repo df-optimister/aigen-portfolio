@@ -55,6 +55,103 @@
     hero.appendChild(inner);
   }
 
+  var PROJECT_TAG = { p01: '논문', p02: 'BONBAB', all: '공통' };
+
+  function renderNext(doc, C) {
+    var sec = doc.getElementById('next');
+    sec.textContent = '';
+    var head = h(doc, 'header', 'proj-head');
+    var titles = h(doc, 'div', 'proj-titles');
+    var label = h(doc, 'p', 'proj-label', 'NEXT ');
+    label.appendChild(h(doc, 'span', 'badge badge-plan', '계획'));
+    titles.appendChild(label);
+    var h2 = h(doc, 'h2', 'proj-title', 'Next with AIGEN');
+    h2.id = 'next-title';
+    titles.appendChild(h2);
+    titles.appendChild(h(doc, 'p', 'proj-sub', '두 프로젝트가 남긴 갭을, AIGEN의 자원으로'));
+    head.appendChild(titles);
+    sec.appendChild(head);
+
+    var wrap = h(doc, 'div', 'next-grid');
+
+    var card1 = h(doc, 'div', 'next-card');
+    card1.appendChild(h(doc, 'h3', 'next-card-t', '갭 ↔ AIGEN 자원'));
+    var table = h(doc, 'table', 'gap-matrix');
+    var thead = h(doc, 'thead');
+    var trh = h(doc, 'tr');
+    ['프로젝트', '갭', '메울 AIGEN 자원'].forEach(function (t) { trh.appendChild(h(doc, 'th', null, t)); });
+    thead.appendChild(trh);
+    table.appendChild(thead);
+    var tb = h(doc, 'tbody');
+    C.next.matrix.forEach(function (m) {
+      var tr = h(doc, 'tr');
+      var tdP = h(doc, 'td');
+      tdP.appendChild(h(doc, 'span', 'proj-tag tag-' + m.project, PROJECT_TAG[m.project]));
+      tr.appendChild(tdP);
+      tr.appendChild(h(doc, 'td', null, m.gap));
+      var tdR = h(doc, 'td');
+      tdR.appendChild(h(doc, 'span', 'res-chip light', m.resource));
+      tr.appendChild(tdR);
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    card1.appendChild(table);
+    wrap.appendChild(card1);
+
+    var card2 = h(doc, 'div', 'next-card');
+    card2.appendChild(h(doc, 'h3', 'next-card-t', '22개월 로드맵'));
+    var ol = h(doc, 'ol', 'roadmap');
+    C.next.roadmap.forEach(function (r) {
+      var li = h(doc, 'li');
+      li.appendChild(h(doc, 'span', 'phase', r.phase));
+      var items = h(doc, 'ul', 'phase-items');
+      r.items.forEach(function (it) {
+        var item = h(doc, 'li');
+        item.dataset.project = it.project;
+        item.appendChild(h(doc, 'span', 'proj-tag tag-' + it.project, PROJECT_TAG[it.project]));
+        item.appendChild(h(doc, 'span', 'phase-text', it.text));
+        items.appendChild(item);
+      });
+      li.appendChild(items);
+      ol.appendChild(li);
+    });
+    card2.appendChild(ol);
+    wrap.appendChild(card2);
+    sec.appendChild(wrap);
+  }
+
+  function renderFooter(doc, C) {
+    var f = doc.getElementById('contact');
+    f.textContent = '';
+    var inner = h(doc, 'div', 'contact-inner');
+    var who = h(doc, 'div', 'contact-who');
+    who.appendChild(h(doc, 'p', 'contact-name', C.meta.nameKo + ' · ' + C.meta.nameEn));
+    who.appendChild(h(doc, 'p', 'contact-label', C.meta.label));
+    inner.appendChild(who);
+    var ul = h(doc, 'ul', 'contact-links');
+    [['LinkedIn', C.links.linkedin], ['GitHub', C.links.github], ['석사 논문 코드', C.links.repoThesis], ['BONBAB 앱 코드', C.links.repoBonbab]].forEach(function (l) {
+      var li = h(doc, 'li');
+      var a = h(doc, 'a', null, l[0] + ' ↗');
+      a.href = l[1];
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    var attr = h(doc, 'p', 'contact-attr');
+    var src = h(doc, 'a', null, C.demo.attribution);
+    src.href = C.demo.datasetUrl;
+    src.target = '_blank';
+    src.rel = 'noopener noreferrer';
+    attr.appendChild(src);
+    inner.appendChild(attr);
+    f.appendChild(inner);
+  }
+
+  root.renderNext = renderNext;
+  root.renderFooter = renderFooter;
+
   function renderAll(C) {
     var doc = root.document;
     renderHero(doc, C);
